@@ -1,0 +1,63 @@
+---
+title: "Handling Huge Files"
+output: html_notebook
+---
+
+O objetivo deste estudo é mostrar como trabalhar com grandes arquivos usando R.
+
+# 1. Bibliotecas
+```{r, warning=FALSE}
+library(ffbase)
+```
+
+
+# 1. Abrindo o Arquivo
+```{r}
+data <- read.csv2('SIH-0818.csv', header = TRUE)
+```
+
+Você pode abrir o seu arquivo diretamente utilizando *read.table.ffdf*. 
+
+# 2. Convertendo o arquivo para FF
+```{r}
+data_ff <- as.ffdf(data)
+```
+
+# 3. Visualizando os Dados
+```{r}
+str(data_ff)
+```
+
+```{r}
+head(data_ff)
+```
+
+# 4. Reduzindo os Dados
+```{r}
+names(data)
+```
+
+
+```{r}
+data_ff_reduced <- subset.ffdf(data_ff, select = c('SP_UF', 'SP_VALATO'), SP_VALATO > 100 & SP_UF == 24)
+```
+
+```{r}
+head(data_ff_reduced)
+```
+
+Outra forma de filtrar os dados
+```{r}
+data_ff_reduced_5k <- ffwhich(data_ff, SP_VALATO > 5000)
+```
+
+Neste caso o retorno é o indice dos valores encontrados.
+```{r}
+head(data_ff_reduced_5k)
+```
+
+# 5. Salvando os resultados como CSV
+```{r}
+result_reduced <- as.data.frame(data_ff_reduced)
+write.csv2(result_reduced, 'resultado_1.csv', row.names = FALSE)
+```
